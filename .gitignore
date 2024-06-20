@@ -1,0 +1,9 @@
+.idea
+HybridCLRData
+Library
+Logs
+UserSettings
+obj
+*.csproj
+YooAssetFrame.sln
+Temp
