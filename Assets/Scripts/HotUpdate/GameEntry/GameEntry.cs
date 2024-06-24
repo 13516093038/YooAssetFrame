@@ -23,13 +23,7 @@ namespace YooAssetFrame
                 Object.Instantiate(obj);
             });
         }
-
-        /// <summary>
-        /// 传入委托异步加载资源
-        /// </summary>
-        /// <param name="path">资源路径</param>
-        /// <param name="callback">回调</param>
-        /// <typeparam name="T">资源类型</typeparam>
+        
         public static async void LoadAsset<T>(string path, Action<T> callback) where T : Object
         {
             AssetHandle handle = package.LoadAssetAsync<T>(path);
@@ -38,7 +32,7 @@ namespace YooAssetFrame
             callback(t);
         }
         
-        public AssetHandle LoadAsset<T>(string path) where T : Object
+        public static AssetHandle LoadAsset<T>(string path) where T : Object
         {
             AssetHandle handle = package.LoadAssetAsync<T>(path);
             return handle;

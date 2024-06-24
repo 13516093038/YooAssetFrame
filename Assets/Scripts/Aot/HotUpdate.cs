@@ -138,7 +138,7 @@ namespace Aot
             else
             {
                 //更新失败
-                Debug.LogError($"更新失败{updateOperation.Error}");
+                Debug.LogWarning($"更新失败{updateOperation.Error}");
             }
         }
         
