@@ -5,10 +5,17 @@ namespace HotUpdate
 {
     public class CharacterBase : MonoBehaviour
     {
-        private Animator _animator;
-        private void Awake()
+        protected Animator _animator;
+        protected CharacterFSM _characterFSM; 
+        protected virtual void Awake()
         {
+            _characterFSM = new CharacterFSM();
             _animator = GetComponent<Animator>();
+        }
+
+        protected virtual void Update()
+        {
+            _characterFSM.Update();
         }
     }
 }
