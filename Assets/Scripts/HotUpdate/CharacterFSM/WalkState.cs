@@ -7,8 +7,6 @@ namespace HotUpdate
         public override void OnEnter()
         {
             base.OnEnter();
-            Debug.Log("WalkState OnEnter");
         }
-        
     }
 }

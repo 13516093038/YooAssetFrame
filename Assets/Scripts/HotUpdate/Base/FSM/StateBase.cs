@@ -1,13 +1,14 @@
 using System.Net;
+using UnityEngine;
 
 namespace HotUpdate
 {
-    public abstract class StateBase<T> : IState where T : StateBase<T>
+    public class StateBase<T> : IState where T : StateBase<T>
     {
         private FsmBase<T> Fsm; 
         public virtual void OnEnter()
         {
-            
+            Debug.Log( GetStateName() + " OnEnter");
         }
 
         public virtual void OnFixedUpdate()
@@ -22,12 +23,12 @@ namespace HotUpdate
         
         public virtual void OnLeave()
         {
-
+            Debug.Log( GetStateName() + " OnLeave");
         }
-
+        
         public virtual string GetStateName()
         {
-            return this.GetType().Name;
+            return GetType().Name;
         }
 
         protected virtual void ChangeState<TK>() where TK : T

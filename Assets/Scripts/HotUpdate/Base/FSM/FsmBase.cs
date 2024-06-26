@@ -48,5 +48,10 @@ namespace HotUpdate
                 state.SetFsm(this);
             }
         }
+
+        public virtual void Destroy()
+        {
+            stateList.Clear();
+        }
     }
 }
