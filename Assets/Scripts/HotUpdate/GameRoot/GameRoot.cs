@@ -6,11 +6,10 @@ namespace HotUpdate
 {
     public class GameRoot : MonoBehaviour
     {
-        public Image image;
         private void Awake()
         {
+            DontDestroyOnLoad(this);
             Debug.Log("11111");
-            Debug.Log(image.name);
         }
 
         private void Update()

@@ -24,20 +24,18 @@ namespace Aot
             //补充元数据
             LoadMetadataForAOTAssemblies();
             await UpdatePackageManifest();
+            
+#if !UNITY_EDITOR
             // Editor环境下，HotUpdate.dll.bytes已经被自动加载，不需要加载，重复加载反而会出问题。
             AssetHandle dllHandle = package.LoadAssetAsync<TextAsset>("Assets/HotUpDataDll/HotUpdate.dll.bytes");
             await dllHandle.Task;
             var dllAsset = dllHandle.AssetObject as TextAsset;
             Assembly hotUpdateAss = Assembly.Load(dllAsset.bytes);
-// #if !UNITY_EDITOR
-//             // Assembly hotUpdateAss =
-//             //     Assembly.Load(File.ReadAllBytes($"{Application.streamingAssetsPath}/HotUpdate.dll.bytes"));
-//             Assembly hotUpdateAss = Assembly.Load(dllAsset.bytes);
-// #else
-//             // Editor下无需加载，直接查找获得HotUpdate程序集
-//             Assembly hotUpdateAss = System.AppDomain.CurrentDomain.GetAssemblies()
-//                 .First(a => a.GetName().Name == "HotUpdate");
-// #endif
+#else
+            // Editor下无需加载，直接查找获得HotUpdate程序集
+            Assembly hotUpdateAss = System.AppDomain.CurrentDomain.GetAssemblies()
+                .First(a => a.GetName().Name == "HotUpdate");
+#endif
             Type[] types = hotUpdateAss.GetTypes();
             foreach (var item in types)
             {
@@ -79,7 +77,6 @@ namespace Aot
 
         async Task UpdatePackageManifest()
         {
-
             YooAssets.Initialize();
             // 创建默认的资源包
             package = YooAssets.CreatePackage("DefaultPackage");
@@ -115,7 +112,7 @@ namespace Aot
                 var operation = package.InitializeAsync(initParametersHostPlayMode);
                 await operation.Task;
             }
-            
+#if !UNITY_EDITOR
             //更新
             string localPackageVersion = package.GetPackageVersion();
             var updateOperation = package.UpdatePackageVersionAsync();
@@ -219,6 +216,9 @@ namespace Aot
                 //下载失败
                 Debug.Log("资源下载失败：" + downloader.Error);
             }
+
+#endif
+
         }
     }
 }

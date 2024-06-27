@@ -2,42 +2,119 @@ using System;
 using System.Collections.Generic;
 using EggCard;
 using UnityEngine;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace HotUpdate
 {
     public class PoolMgr : MonoSingleton<PoolMgr>
-    { 
-        [Header("Is Auto Release")] 
-        [SerializeField] private bool _isAutoRelease; 
-        [Header("Expire Time")] 
-        [SerializeField] private int _lifeTime;
-        [Header("Capacity")] 
-        [SerializeField] private int _capacity;
+    {
+        [Header("Is Auto Release Default")] [SerializeField]
+        private bool _isAutoRelease;
 
-        private Dictionary<string, List<GameObject>> _gamePool = new();
-        private Dictionary<string, Transform> _objParents = new();
+        [Header("Expire Time")] [SerializeField]
+        private int _expireTime;
 
-        public async void TakeOut<T>(string path, Action<T> callback = null, Transform parent = null) where T : Transform
+        [Header("Default Capacity")] [SerializeField]
+        private int _capacity;
+
+        private Dictionary<string, object> gamePools = new();
+
+        public GamePool<T> CreatePool<T>(string path, Transform parent = null) where T : Object
         {
-            //如果是首个对象
-            if(!_gamePool.ContainsKey(path))
+            if (gamePools.TryGetValue(path, out var gamePool))
             {
-                _gamePool.Add(path, new List<GameObject>());
-                Action<T> loadSuccess = (obj) =>
-                {
-                    Instantiate(obj, parent);
-                    obj.position = Vector3.zero;
-                };
-                loadSuccess += callback;
-                Resource.Ins.LoadAsset<T>(path, loadSuccess);
+                Debug.LogWarning("Pool already exists");
+                return (GamePool<T>) gamePool;
             }
-            
+            GamePool<T> pool = new GamePool<T>(path, parent);
+            gamePools.Add(path, pool);
+            return pool;
         }
 
-        public void Recovery<T>(string path, Transform obj) where T : Object
+        public void DestroyPool(string path)
         {
+            if (!gamePools.ContainsKey(path))
+            {
+                Debug.LogWarning("Pool not exists");
+            }
+            else
+            {
+                gamePools.Remove(path);
+            }
+        }
+
+        public void DestroyAllPool()
+        {
+            gamePools.Clear();
+        }
+        
+        public class GamePool<T> where T : Object
+        {
+            private List<GameObject> gameObjs;
+            private string path;
+            private Transform parent;
+            private PoolMgr poolMgr;
             
+            public GamePool(string path, Transform parent = null)
+            {
+                poolMgr = Ins;
+                gameObjs = new List<GameObject>();
+                this.parent = new GameObject(typeof(T).Name).transform;
+                this.parent.SetParent(poolMgr.transform);
+                this.path = path;
+            }
+
+            private void AddToGameObjs(GameObject obj)
+            {
+                obj.SetActive(false);
+                gameObjs.Add(obj);
+                if (poolMgr._isAutoRelease)
+                {
+                    MonoMgr.Ins.StartDelayCall(poolMgr._expireTime, () =>
+                    {
+                        Destroy(obj);
+                    });
+                }
+            }
+
+            public void TakeOut(Action<T> callback = null) 
+            {
+                if (gameObjs.Count > 0)
+                {
+                    GameObject obj = gameObjs[0];
+                    gameObjs.Remove(obj);
+                    obj.gameObject.SetActive(true);
+                    obj.transform.SetParent(poolMgr.transform);
+                    callback?.Invoke(obj as T);
+                }
+                else
+                {
+                    Resource.Ins.LoadAsset<T>(path, (obj) =>
+                    {
+                        GameObject go = Instantiate(obj as GameObject, parent);
+                        go.transform.localPosition = Vector3.zero;
+                        go.transform.localRotation = Quaternion.identity;
+                        go.transform.localScale = Vector3.one;
+                        go.SetActive(true);
+                        callback?.Invoke(obj);
+                    });
+                }
+            }
+
+            public void Recovery(T obj)
+            {
+                if(poolMgr._capacity > gameObjs.Count)
+                {
+                    GameObject go = obj as GameObject;
+                    go.transform.parent = parent;
+                    AddToGameObjs(go);
+                }
+                else
+                {
+                    Destroy(obj);
+                }
+            }
         }
     }
 }
