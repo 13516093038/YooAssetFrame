@@ -24,7 +24,7 @@ MonoBehaviour:
     AutoCollectShaders: 1
     IgnoreRuleName: NormalIgnoreRule
     Groups:
-    - GroupName: Prefab
+    - GroupName: 
       GroupDesc: 
       AssetTags: 
       ActiveRuleName: EnableGroup
@@ -35,5 +35,21 @@ MonoBehaviour:
         AddressRuleName: AddressByFileName
         PackRuleName: PackDirectory
         FilterRuleName: CollectPrefab
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/AOTDLL
+        CollectorGUID: 886550ac1706649049c699b7da51052c
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/HotUpDateDll
+        CollectorGUID: e3dd0d754a92d40e1b5ef583cd13c198
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
         AssetTags: 
         UserData: 

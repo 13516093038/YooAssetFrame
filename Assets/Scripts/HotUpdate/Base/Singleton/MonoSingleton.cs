@@ -20,10 +20,6 @@ namespace EggCard
             {
                 m_Ins = this as T;
             }
-            else
-            {
-                throw new Exception("MonoSingleton " + typeof(T).ToString() + " has more than one instance!");
-            }
         }
     }
 }

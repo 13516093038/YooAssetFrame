@@ -21,10 +21,9 @@ namespace Aot
 
         async void Start()
         {
+            await UpdatePackageManifest();
             //补充元数据
             await LoadMetadataForAOTAssemblies();
-            await UpdatePackageManifest();
-            
 #if !UNITY_EDITOR
             // Editor环境下，HotUpdate.dll.bytes已经被自动加载，不需要加载，重复加载反而会出问题。
             AssetHandle dllHandle = package.LoadAssetAsync<TextAsset>("Assets/HotUpDataDll/HotUpdate.dll.bytes");
@@ -64,7 +63,7 @@ namespace Aot
             foreach (var aotDllName in aotDllList)
             {
                 
-                AssetHandle dllHandle = package.LoadAssetAsync<TextAsset>("Assets/AOTDLL" + aotDllName + "bytes");
+                AssetHandle dllHandle = package.LoadAssetAsync<TextAsset>("Assets/AOTDLL/" + aotDllName + ".bytes");
                 await dllHandle.Task;
                 byte[] dllBytes = (dllHandle.AssetObject as TextAsset).bytes;
                 var err = HybridCLR.RuntimeApi.LoadMetadataForAOTAssembly(dllBytes, HomologousImageMode.SuperSet);
