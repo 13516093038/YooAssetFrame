@@ -7,3 +7,5 @@ obj
 *.csproj
 YooAssetFrame.sln
 Temp
+Assets/HybridCLRGenerate
+Bundles

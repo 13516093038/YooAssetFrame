@@ -22,7 +22,7 @@ namespace Aot
         async void Start()
         {
             //补充元数据
-            LoadMetadataForAOTAssemblies();
+            await LoadMetadataForAOTAssemblies();
             await UpdatePackageManifest();
             
 #if !UNITY_EDITOR
@@ -58,18 +58,15 @@ namespace Aot
 
         }
 
-        void LoadMetadataForAOTAssemblies()
+        async Task LoadMetadataForAOTAssemblies()
         {
-            List<string> aotDllList = new List<string>
-            {
-                "YooAsset.dll",
-                "mscorlib.dll",
-                "UnityEngine.CoreModule.dll",
-            };
-
+            List<string> aotDllList = new List<string>(AOTGenericReferences.PatchedAOTAssemblyList);
             foreach (var aotDllName in aotDllList)
             {
-                byte[] dllBytes = File.ReadAllBytes($"{Application.streamingAssetsPath}/{aotDllName}.bytes");
+                
+                AssetHandle dllHandle = package.LoadAssetAsync<TextAsset>("Assets/AOTDLL" + aotDllName + "bytes");
+                await dllHandle.Task;
+                byte[] dllBytes = (dllHandle.AssetObject as TextAsset).bytes;
                 var err = HybridCLR.RuntimeApi.LoadMetadataForAOTAssembly(dllBytes, HomologousImageMode.SuperSet);
                 Debug.Log($"LoadMetadataForAOTAssembly:{aotDllName}. ret:{err}");
             }
