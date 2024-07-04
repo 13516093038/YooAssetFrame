@@ -78,7 +78,7 @@ namespace HotUpdate
                 }
             }
 
-            public void TakeOut(Action<T> callback = null) 
+            public void TakeOut(Action<T> callback) 
             {
                 if (gameObjs.Count > 0)
                 {

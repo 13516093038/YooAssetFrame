@@ -21,9 +21,9 @@ namespace Aot
 
         async void Start()
         {
-            await UpdatePackageManifest();
             //补充元数据
-            await LoadMetadataForAOTAssemblies();
+            LoadMetadataForAOTAssemblies();
+            await UpdatePackageManifest();
 #if !UNITY_EDITOR
             // Editor环境下，HotUpdate.dll.bytes已经被自动加载，不需要加载，重复加载反而会出问题。
             AssetHandle dllHandle = package.LoadAssetAsync<TextAsset>("Assets/HotUpDataDll/HotUpdate.dll.bytes");
@@ -35,37 +35,18 @@ namespace Aot
             Assembly hotUpdateAss = System.AppDomain.CurrentDomain.GetAssemblies()
                 .First(a => a.GetName().Name == "HotUpdate");
 #endif
-            Type[] types = hotUpdateAss.GetTypes();
-            foreach (var item in types)
-            {
-                if (item.Name == "GameEntry")
-                {
-                    Debug.Log(item.Name);
-                    foreach (var method in item.GetMethods())
-                    {
-                        if (method.Name == "LoadGameRoot")
-                        {
-                            method.Invoke(null, null);
-                            Debug.Log(method.Name);
-                        }
-                    }
-                }
-            }
-
-            // Type type = hotUpdateAss.GetType("GameEntry");
-            // type.GetMethod("LoadGameRoot").Invoke(null, null);
-
+            
+            Type type = hotUpdateAss.GetType("HotUpdate.GameEntry");
+            var method = type.GetMethod("LoadGameRoot");
+            method?.Invoke(null, null);
         }
 
-        async Task LoadMetadataForAOTAssemblies()
+        void LoadMetadataForAOTAssemblies()
         {
             List<string> aotDllList = new List<string>(AOTGenericReferences.PatchedAOTAssemblyList);
             foreach (var aotDllName in aotDllList)
             {
-                
-                AssetHandle dllHandle = package.LoadAssetAsync<TextAsset>("Assets/AOTDLL/" + aotDllName + ".bytes");
-                await dllHandle.Task;
-                byte[] dllBytes = (dllHandle.AssetObject as TextAsset).bytes;
+                byte[] dllBytes = File.ReadAllBytes($"{Application.streamingAssetsPath}/{aotDllName}.bytes");
                 var err = HybridCLR.RuntimeApi.LoadMetadataForAOTAssembly(dllBytes, HomologousImageMode.SuperSet);
                 Debug.Log($"LoadMetadataForAOTAssembly:{aotDllName}. ret:{err}");
             }
@@ -108,7 +89,14 @@ namespace Aot
                 var operation = package.InitializeAsync(initParametersHostPlayMode);
                 await operation.Task;
             }
-#if !UNITY_EDITOR
+
+            //编辑器模式无需更新
+            if (Application.isEditor)
+            {
+                Debug.Log("编辑器模式无需更新");
+                return;
+            }
+            
             //更新
             string localPackageVersion = package.GetPackageVersion();
             var updateOperation = package.UpdatePackageVersionAsync();
@@ -212,8 +200,6 @@ namespace Aot
                 //下载失败
                 Debug.Log("资源下载失败：" + downloader.Error);
             }
-
-#endif
 
         }
     }

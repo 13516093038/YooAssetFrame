@@ -1,12 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml.Linq;
 using HybridCLR.Editor;
 using HybridCLR.Editor.Commands;
 using HybridCLR.Editor.Settings;
 using UnityEditor;
 using UnityEngine;
+using YooAsset.Editor;
 
 public class PackEditor : EditorWindow
 {
@@ -22,7 +23,49 @@ public class PackEditor : EditorWindow
         CopyAotDllToAssets();
         CopyDllToAssets();
     }
-    
+
+    [MenuItem("Pack/BuildPackage", priority = 2)]
+    public static void BuildPackage()
+    {
+        string PackageName = "DefaultPackage";
+        EBuildPipeline BuildPipeline = EBuildPipeline.BuiltinBuildPipeline;
+        BuildTarget BuildTarget = EditorUserBuildSettings.activeBuildTarget;
+        var buildMode = AssetBundleBuilderSetting.GetPackageBuildMode(PackageName, BuildPipeline);
+        var fileNameStyle = AssetBundleBuilderSetting.GetPackageFileNameStyle(PackageName, BuildPipeline);
+        var buildinFileCopyOption =
+            AssetBundleBuilderSetting.GetPackageBuildinFileCopyOption(PackageName, BuildPipeline);
+        var buildinFileCopyParams =
+            AssetBundleBuilderSetting.GetPackageBuildinFileCopyParams(PackageName, BuildPipeline);
+        var compressOption = AssetBundleBuilderSetting.GetPackageCompressOption(PackageName, BuildPipeline);
+
+        BuiltinBuildParameters buildParameters = new BuiltinBuildParameters();
+        buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
+        buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
+        buildParameters.BuildPipeline = BuildPipeline.ToString();
+        buildParameters.BuildTarget = BuildTarget;
+        buildParameters.BuildMode = buildMode;
+        buildParameters.PackageName = PackageName;
+        buildParameters.PackageVersion = GetPackageVersion();
+        buildParameters.EnableSharePackRule = true;
+        buildParameters.VerifyBuildingResult = true;
+        buildParameters.FileNameStyle = fileNameStyle;
+        buildParameters.BuildinFileCopyOption = buildinFileCopyOption;
+        buildParameters.BuildinFileCopyParams = buildinFileCopyParams;
+        //buildParameters.EncryptionServices = CreateEncryptionInstance();
+        buildParameters.CompressOption = compressOption;
+
+        BuiltinBuildPipeline pipeline = new BuiltinBuildPipeline();
+        var buildResult = pipeline.Run(buildParameters, true);
+        if (buildResult.Success)
+            EditorUtility.RevealInFinder(buildResult.OutputPackageDirectory);
+    }
+
+    private static string GetPackageVersion()
+    {
+        int totalMinutes = DateTime.Now.Hour * 60 + DateTime.Now.Minute;
+        return DateTime.Now.ToString("yyyy-MM-dd") + "-" + totalMinutes;
+    }
+
     private static void CopyAotDllToAssets()
     {
         List<string> aotDlls = new List<string>();
@@ -30,12 +73,13 @@ public class PackEditor : EditorWindow
         {
             aotDlls.Add(dllName);
         }
+
         BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
         string buildDir = SettingsUtil.GetAssembliesPostIl2CppStripDir(target);
         string folderPath = Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length) + buildDir;
         Debug.Log(folderPath);
         string[] files = Directory.GetFiles(folderPath);
-        string targetDirectory = Application.dataPath + "/AOTDLL";
+        string targetDirectory = Application.streamingAssetsPath;
         foreach (var file in files)
         {
             foreach (var aotFile in aotDlls)
@@ -44,12 +88,12 @@ public class PackEditor : EditorWindow
                 {
                     string newFileName = aotFile + ".bytes";
                     string destinationPath = Path.Combine(targetDirectory, newFileName);
-                    
+
                     if (File.Exists(destinationPath))
                     {
                         File.Delete(destinationPath);
                     }
-                    
+
                     File.Copy(file, destinationPath);
                     // 刷新资源，使其在 Unity 编辑器中可见
                     AssetDatabase.Refresh();

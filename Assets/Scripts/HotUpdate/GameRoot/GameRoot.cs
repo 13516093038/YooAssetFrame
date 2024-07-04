@@ -1,15 +1,16 @@
 using System;
+using EggCard;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace HotUpdate
 {
-    public class GameRoot : MonoBehaviour
+    public class GameRoot : MonoSingleton<GameRoot>
     {
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             DontDestroyOnLoad(this);
-            Debug.Log("11111");
         }
 
         private void Update()

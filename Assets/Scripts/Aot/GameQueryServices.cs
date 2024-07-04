@@ -6,7 +6,6 @@ using YooAsset;
 namespace Aot
 {
     // 内置文件查询服务类
-
     public class GameQueryServices : IBuildinQueryServices
     {
         /// <summary>

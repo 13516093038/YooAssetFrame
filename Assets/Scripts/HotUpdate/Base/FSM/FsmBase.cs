@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace HotUpdate
@@ -14,6 +14,17 @@ namespace HotUpdate
         {
             currentState = stateList.Find(x=> x.GetType() == typeof(TK));
             currentState.OnEnter();
+        }
+
+        public virtual void Start(Type stateType) 
+        {
+            currentState = stateList.Find(x=> x.GetType() == stateType);
+            currentState.OnEnter();
+        }
+        
+        public T GetCurrentState()
+        {
+            return currentState;
         }
 
         public virtual void ChangeState<TK>() where TK : T
