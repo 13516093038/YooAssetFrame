@@ -7,6 +7,7 @@ namespace HotUpdate
         public override void OnEnter()
         {
             base.OnEnter();
+            ChangeState<MainProcedure>();
         }
     }
 }

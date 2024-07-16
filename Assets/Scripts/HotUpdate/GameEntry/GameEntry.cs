@@ -1,6 +1,4 @@
 using UnityEngine;
-using YooAsset;
-using Object = UnityEngine.Object;
 
 namespace HotUpdate
 {
@@ -10,7 +8,8 @@ namespace HotUpdate
         {
             Resource.Ins.LoadAsset<GameObject>("Assets/Prefabs/GameRoot.prefab", (obj) =>
             {
-                Object.Instantiate(obj);
+                GameObject.Instantiate(obj);
+                Debug.Log("GameRoot加载完毕");
             });
         }
     }

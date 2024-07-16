@@ -1,5 +1,7 @@
 using System;
+using System.Threading.Tasks;
 using EggCard;
+using UnityEngine;
 using YooAsset;
 using Object = UnityEngine.Object;
 
@@ -24,10 +26,18 @@ namespace HotUpdate
             callback(t);
         }
         
-        public AssetHandle LoadAsset<T>(string path) where T : Object
+        public async Task<T> LoadAsset<T>(string path) where T : Object
         {
             AssetHandle handle = package.LoadAssetAsync<T>(path);
-            return handle;
+            await handle.Task;
+            return handle.AssetObject as T;
+        }
+
+        public async Task<GameObject> LoadAsset(string path)
+        {
+            AssetHandle handle = package.LoadAssetAsync<GameObject>(path);
+            await handle.Task;
+            return handle.AssetObject as GameObject;
         }
     }
 }

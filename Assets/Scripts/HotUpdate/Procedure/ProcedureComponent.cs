@@ -19,10 +19,8 @@ namespace HotUpdate
         
         private ProcedureBase m_EntranceProcedure = null;
 
-
-        protected override void Awake()
+        private void Start()
         {
-            base.Awake();
             Init();
         }
 

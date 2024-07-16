@@ -11,12 +11,25 @@ namespace HotUpdate
         private List<Button> m_AllButtonList = new List<Button>();
         private List<Toggle> m_AllToggleList = new List<Toggle>();
         private List<InputField> m_AllInputFieldList = new List<InputField>();
+
+        private CanvasGroup mUIMask;
+        private Transform mUIContent;
+
+        /// <summary>
+        /// 初始化基类组件
+        /// </summary>
+        private void InitializeBaseComponent()
+        {
+            mUIMask = transform.Find("UIMask").GetComponent<CanvasGroup>();
+            mUIContent = transform.Find("UIContent").transform;
+        }
         
         #region 生命周期
 
         public override void OnAwake()
         {
             base.OnAwake();
+            InitializeBaseComponent();
         }
 
         public override void OnShow()
@@ -42,12 +55,27 @@ namespace HotUpdate
             RemoveAllInputListener();
         }
 
+        #endregion
+        
         public override void SetVisible(bool isVisible)
         {
             base.SetVisible(isVisible);
+            //临时代码
+            gameObject.SetActive(isVisible);
+            Visible = isVisible;
         }
 
-        #endregion
+        public void SetMaskVisible(bool isVisible)
+        {
+            if (!UIModule.Ins.uiSetting.SINGMASK_SYSTEM)
+            {
+                return;
+            }
+            else
+            {
+                mUIMask.alpha = isVisible ? 1 : 0;
+            }
+        }
 
         #region 事件管理
 
