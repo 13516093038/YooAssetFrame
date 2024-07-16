@@ -58,7 +58,6 @@ namespace YooAssetFrame.Editor
                     
                     //计算该节点查找路径
                     string objPath = name;
-                    bool isFindOver = false;
                     Transform parent = obj.transform;
 
                     while (parent.name != winName)
@@ -74,8 +73,8 @@ namespace YooAssetFrame.Editor
                         }
                     }
                     objFindPathDic.Add(obj.GetInstanceID(),objPath);
-                    PresWindowNodeData(trans.GetChild(i), winName);
                 }
+                PresWindowNodeData(trans.GetChild(i), winName);
             }
         }
     }
