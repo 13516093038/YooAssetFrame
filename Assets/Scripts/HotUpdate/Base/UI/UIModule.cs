@@ -222,25 +222,25 @@ namespace HotUpdate
                 for (int i = 0; i < mVisibleWindowList.Count; i++)
                 {
                     WindowBase window = mVisibleWindowList[i];
-                    if (window == null && window.gameObject)
+                    if (window != null && window.gameObject)
                     {
                         window.SetMaskVisible(false);
                         if (maxOrderWindBase == null)
                         {
                             maxOrderWindBase = window;
-                            maxOrder = window.Canvas.renderOrder;
+                            maxOrder = window.Canvas.sortingOrder;
                             maxIndex = window.transform.GetSiblingIndex();
                         }
                         else
                         {
                             //找到最大渲染层级的窗口，找到它
-                            if (maxOrder < window.Canvas.renderOrder)
+                            if (maxOrder < window.Canvas.sortingOrder)
                             {
                                 maxOrderWindBase = window;
-                                maxOrder = window.Canvas.renderOrder;
+                                maxOrder = window.Canvas.sortingOrder;
                             }
                             //如果两个窗口的渲染层级相同，就找到同节点下的最靠下的一个物体，优先渲染Mask
-                            else if(maxOrder == window.Canvas.renderOrder && maxIndex < window.transform.GetSiblingIndex())
+                            else if(maxOrder == window.Canvas.sortingOrder && maxIndex < window.transform.GetSiblingIndex())
                             {
                                 maxOrderWindBase = window;
                                 maxIndex = window.transform.GetSiblingIndex();

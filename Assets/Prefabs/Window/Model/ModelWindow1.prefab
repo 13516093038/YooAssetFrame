@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 1105370000064869487}
   - component: {fileID: 2768944741495134411}
   m_Layer: 0
-  m_Name: ModelWindow
+  m_Name: ModelWindow1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
