@@ -22,18 +22,18 @@ namespace HotUpdate
 
         async void Test()
         {
-            ModelWindow modelWindow = await UIModule.Ins.PopUpWindow<ModelWindow>();
-            TestWindow testWindow = await UIModule.Ins.PopUpWindow<TestWindow>();
+            // ModelWindow modelWindow = await UIModule.Ins.PopUpWindow<ModelWindow>();
+            // TestWindow testWindow = await UIModule.Ins.PopUpWindow<TestWindow>();
         }
         
         void Test1()
         {
-            UIModule.Ins.HideWindow<TestWindow>();
+            //UIModule.Ins.HideWindow<TestWindow>();
         }
         
         async void Test2()
         {
-            ModelWindow modelWindow = await UIModule.Ins.PopUpWindow<ModelWindow>();
+            //ModelWindow modelWindow = await UIModule.Ins.PopUpWindow<ModelWindow>();
         }
     }
 }
