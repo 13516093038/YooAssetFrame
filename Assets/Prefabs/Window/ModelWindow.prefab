@@ -100,7 +100,7 @@ GameObject:
   - component: {fileID: 8806819670069756465}
   - component: {fileID: 2789521062112568191}
   m_Layer: 0
-  m_Name: '[Button]CloseBtn'
+  m_Name: '[Button]Close'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

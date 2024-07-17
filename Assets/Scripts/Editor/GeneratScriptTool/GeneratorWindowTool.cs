@@ -26,7 +26,7 @@ namespace YooAssetFrame.Editor
             //生成CS脚本
             string csContent = CreateWindowCs(obj.name);
             string dirPath = GeneratorConfig.WindowGeneratorPath + "/" + obj.name;
-            string csPath = GeneratorConfig.WindowGeneratorPath + "/" + obj.name + "/"+ obj.name + "cs";
+            string csPath = GeneratorConfig.WindowGeneratorPath + "/" + obj.name + "/"+ obj.name + ".cs";
             if (!Directory.Exists(dirPath))
             {
                 Directory.CreateDirectory(dirPath);
@@ -48,6 +48,7 @@ namespace YooAssetFrame.Editor
             //获取字段名称
             string dataListJson = PlayerPrefs.GetString(GeneratorConfig.OBJDATALIST_KEY);
             List<EditorObjectData> objectDataList = JsonConvert.DeserializeObject<List<EditorObjectData>>(dataListJson);
+            string nameSpaceName = "HotUpdate";
             methodDic.Clear();
             StringBuilder sb = new StringBuilder();
             
@@ -63,12 +64,19 @@ namespace YooAssetFrame.Editor
             sb.AppendLine("using UnityEngine;");
             sb.AppendLine();
             
+            //生成命名空间
+            if (!string.IsNullOrEmpty(nameSpaceName))
+            {
+                sb.AppendLine($"namespace {nameSpaceName}");
+                sb.AppendLine("{");
+            }
+            
             //生成类名
             sb.AppendLine($"\tpublic class {name} : WindowBase");
             sb.AppendLine("\t{");
             
             //生成字段
-            sb.AppendLine($"\t\tpublic {name}UIComponent uiComp = new {name}UIComponent()");
+            sb.AppendLine($"\t\tprivate {name}UIComponent uiComp = new {name}UIComponent();");
             //生成生命周期函数
             sb.AppendLine();
             sb.AppendLine("\t\t#region 生命周期函数");
@@ -122,7 +130,7 @@ namespace YooAssetFrame.Editor
 
                 if (type.Contains("Button"))
                 {
-                    suffix = "buttonClick";
+                    suffix = "ButtonClick";
                     CreateMethod(sb, methodDic, methodName + suffix);
                 }
                 else if (type.Contains("InputField"))
@@ -141,6 +149,12 @@ namespace YooAssetFrame.Editor
             sb.AppendLine("\t\t#endregion");
 
             sb.AppendLine("\t}");
+            
+            //生成命名空间
+            if (!string.IsNullOrEmpty(nameSpaceName))
+            {
+                sb.AppendLine("}");
+            }
             return sb.ToString();
         }
 

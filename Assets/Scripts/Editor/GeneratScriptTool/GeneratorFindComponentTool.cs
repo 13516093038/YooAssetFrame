@@ -169,7 +169,7 @@ namespace YooAssetFrame.Editor
 
                 if (type.Contains("Button"))
                 {
-                    suffix = "click";
+                    suffix = "Click";
                     sb.AppendLine($"\t\t\ttarget.AddButtonClickListener({methodName}{type},mWindow.On{methodName}Button{suffix});");
                 }
                 
