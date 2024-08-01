@@ -43,15 +43,8 @@ namespace YooAssetFrame.Editor
             {
                 Directory.CreateDirectory(dirPath);
             }
-            //生成脚本文件
-            if (File.Exists(csPath))
-            {
-                File.Delete(csPath);
-            }
-            StreamWriter writer = File.CreateText(csPath);
-            writer.Write(csContent);
-            writer.Close();
-            AssetDatabase.Refresh();
+
+            UIWindowEditor.ShowWindow(csContent, csPath);
         }
 
         /// <summary>

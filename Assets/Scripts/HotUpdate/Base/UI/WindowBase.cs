@@ -56,6 +56,11 @@ namespace HotUpdate
         }
 
         #endregion
+
+        public void HideWindow()
+        {
+            UIModule.Ins.HideWindow(Name);
+        }
         
         public override void SetVisible(bool isVisible)
         {

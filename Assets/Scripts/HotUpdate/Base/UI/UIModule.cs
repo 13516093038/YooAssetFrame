@@ -141,7 +141,7 @@ namespace HotUpdate
             HideWindow(window);
         }
         
-        private void HideWindow(string wndName)
+        public void HideWindow(string wndName)
         {
             WindowBase window = GetWindow(wndName);
             HideWindow(window);

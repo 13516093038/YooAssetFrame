@@ -32,15 +32,7 @@ namespace YooAssetFrame.Editor
                 Directory.CreateDirectory(dirPath);
             }
             //生成脚本文件
-            if (File.Exists(csPath))
-            {
-                File.Delete(csPath);
-            }
-            StreamWriter writer = File.CreateText(csPath);
-            writer.Write(csContent);
-            writer.Close();
-            AssetDatabase.Refresh();
-            Debug.Log(csPath);
+            UIWindowEditor.ShowWindow(csContent, csPath, methodDic);
         }
 
         private static string CreateWindowCs(string name)
@@ -70,6 +62,7 @@ namespace YooAssetFrame.Editor
                 sb.AppendLine($"namespace {nameSpaceName}");
                 sb.AppendLine("{");
             }
+            sb.AppendLine();
             
             //生成类名
             sb.AppendLine($"\tpublic class {name} : WindowBase");
@@ -165,7 +158,7 @@ namespace YooAssetFrame.Editor
             sb.AppendLine("\t\t{");
             if (methodName == "OnCloseButtonClick")
             {
-                sb.AppendLine("\t\t\tHideWindow()");
+                sb.AppendLine("\t\t\tHideWindow();");
             }
             sb.AppendLine("\t\t}");
             
