@@ -8,9 +8,16 @@ using File = System.IO.File;
 
 namespace YooAssetFrame.Editor
 {
+    public enum GenerateType
+    {
+        Window,
+        ComponentTool,
+    }
+    
     public class UIWindowEditor : EditorWindow
     {
         private string scriptContent;
+        private string windowContent;
         private string filePath;
         private Vector2 scroll = new Vector2();
 
@@ -20,24 +27,44 @@ namespace YooAssetFrame.Editor
         /// <param name="content"></param>
         /// <param name="filePath"></param>
         /// <param name="insterDic"></param>
-        public static void ShowWindow(string content, string filePath, Dictionary<string, string> insterDic = null)
+        public static void ShowWindow(GenerateType type, string content, string filePath, Dictionary<string, string> insterDic = null)
         {
             //创建代码显示窗口
             UIWindowEditor window = (UIWindowEditor)GetWindowWithRect(typeof(UIWindowEditor),
                 new Rect(100, 50, 800, 700), true, "window生成界面");
             window.scriptContent = content;
+            window.windowContent = content;
             window.filePath = filePath;
             //处理代码新增
-            if (File.Exists(filePath) & insterDic != null)
+            if (File.Exists(filePath) && type == GenerateType.Window)
             {
-                //获取原始代码
                 string originScript = File.ReadAllText(filePath);
-                foreach (var item in insterDic)
+                window.windowContent = File.ReadAllText(filePath);
+                //获取原始代码
+                if (insterDic != null)
                 {
-                    //如果代码中没有这个代码进行插入
-                    int index = window.GetInsertIndex(originScript);
-                    originScript = originScript.Insert(index, item.Value + "\t\t");
+                    int dicIndex = 0;
+                    foreach (var item in insterDic)
+                    {
+                        if (originScript.Contains(item.Key))
+                        {
+                            continue;
+                        }
+
+                        //如果代码中没有这个代码进行插入
+                        int index = window.GetInsertIndex(originScript);
+                        
+                        if (dicIndex == 0)
+                        {
+                            window.windowContent = window.windowContent.Insert(index, "<color=red></color>");
+                        }
+                        window.windowContent = window.windowContent.Insert(index + "<color=red>".Length, item.Value + "\t\t");
+                        originScript = originScript.Insert(index, item.Value + "\t\t");
+                        dicIndex++;
+                    }
                 }
+
+                window.scriptContent = originScript;
             }
 
             window.Show();
@@ -45,32 +72,36 @@ namespace YooAssetFrame.Editor
 
         private void OnGUI()
         {
+            
             //绘制ScrollView
-            scroll = EditorGUILayout.BeginScrollView(scroll, GUILayout.Height(600), GUILayout.Width(800));
-            EditorGUILayout.TextArea(scriptContent);
-            EditorGUILayout.EndScrollView();
-            EditorGUILayout.Space();
+            scroll = GUILayout.BeginScrollView(scroll, GUILayout.Height(600), GUILayout.Width(800));
+            //GUILayout.Label(windowContent, new GUIStyle(GUI.skin.label)
+            GUILayout.Label(windowContent, new GUIStyle(GUI.skin.label)
+            {
+                richText = true
+            });
+            GUILayout.EndScrollView();
+            GUILayout.Space(50);
 
             //绘制脚本生成路径
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.TextArea("脚本生成路径：" + filePath);
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space();
+            GUILayout.BeginHorizontal();
+            GUILayout.TextArea("脚本生成路径：" + filePath);
+            GUILayout.EndHorizontal();
+            //GUILayout.Space(50);
 
             //绘制按钮
-            EditorGUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal();
             if (GUILayout.Button("生成脚本", GUILayout.Height(30)))
             {
                 //按钮事件
                 ButtonClick();
             }
 
-            EditorGUILayout.EndHorizontal();
+            GUILayout.EndHorizontal();
         }
         
         void ButtonClick()
         {
-            
             //生成脚本文件
             if (File.Exists(filePath))
             {

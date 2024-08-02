@@ -32,7 +32,7 @@ namespace YooAssetFrame.Editor
                 Directory.CreateDirectory(dirPath);
             }
             //生成脚本文件
-            UIWindowEditor.ShowWindow(csContent, csPath, methodDic);
+            UIWindowEditor.ShowWindow( GenerateType.Window, csContent, csPath, methodDic);
         }
 
         private static string CreateWindowCs(string name)
@@ -160,13 +160,24 @@ namespace YooAssetFrame.Editor
             {
                 sb.AppendLine("\t\t\tHideWindow();");
             }
+            else
+            {
+                sb.AppendLine();
+            }
             sb.AppendLine("\t\t}");
             
             //储存UI组件事件，提供给后续新增代码使用
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine($"\t\tpublic void {methodName}({param})");
+            builder.AppendLine($"public void {methodName}({param})");
             builder.AppendLine("\t\t{");
-            builder.AppendLine();
+            if (methodName == "OnCloseButtonClick")
+            {
+                builder.AppendLine("\t\t\tHideWindow();");
+            }
+            else
+            {
+                builder.AppendLine();
+            }
             builder.AppendLine("\t\t}");
             methodDic.Add(methodName, builder.ToString());
         }
