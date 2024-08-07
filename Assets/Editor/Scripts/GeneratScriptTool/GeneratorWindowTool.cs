@@ -12,7 +12,7 @@ namespace YooAssetFrame.Editor
     {
         private static Dictionary<string, string> methodDic = new Dictionary<string, string>();
         
-        [MenuItem("GameObject/生成Window脚本")]
+        [MenuItem("GameObject/生成Window脚本(shift + V) #V")]
         static void CreatFindComponentScripts()
         {
             //获取到当前选择的物体
@@ -67,9 +67,16 @@ namespace YooAssetFrame.Editor
             //生成类名
             sb.AppendLine($"\tpublic class {name} : WindowBase");
             sb.AppendLine("\t{");
-            
+
             //生成字段
-            sb.AppendLine($"\t\tprivate {name}UIComponent uiComp = new {name}UIComponent();");
+            if (GeneratorConfig.ReferenceType == ReferenceType.Bind)
+            {
+                sb.AppendLine($"\t\tprivate {name}DataComponent dataComp;");
+            }
+            else
+            {
+                sb.AppendLine($"\t\tprivate {name}UIComponent uiComp = new {name}UIComponent();");
+            }
             //生成生命周期函数
             sb.AppendLine();
             sb.AppendLine("\t\t#region 生命周期函数");
@@ -77,7 +84,15 @@ namespace YooAssetFrame.Editor
             sb.AppendLine("\t\tpublic override void OnAwake()");
             sb.AppendLine("\t\t{");
             sb.AppendLine("\t\t\tbase.OnAwake();");
-            sb.AppendLine("\t\t\tuiComp.InitComponent(this);");
+            if (GeneratorConfig.ReferenceType == ReferenceType.Bind)
+            {
+                sb.AppendLine($"\t\t\tdataComp = gameObject.GetComponent<{name}DataComponent>();");
+                sb.AppendLine("\t\t\tdataComp.InitComponent(this);");
+            }
+            else
+            {
+                sb.AppendLine("\t\t\tuiComp.InitComponent(this);");
+            }
             sb.AppendLine("\t\t}");
             sb.AppendLine();
             //OnShow

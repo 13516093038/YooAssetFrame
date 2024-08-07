@@ -1,4 +1,3 @@
-using HotUpdate.Window;
 using UnityEngine;
 
 namespace HotUpdate
@@ -22,7 +21,7 @@ namespace HotUpdate
 
         async void Test()
         {
-            // ModelWindow modelWindow = await UIModule.Ins.PopUpWindow<ModelWindow>();
+            ModelWindow modelWindow = await UIModule.Ins.PopUpWindow<ModelWindow>();
             // TestWindow testWindow = await UIModule.Ins.PopUpWindow<TestWindow>();
         }
         

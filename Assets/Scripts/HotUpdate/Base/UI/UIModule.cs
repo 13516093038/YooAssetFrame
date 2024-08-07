@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EggCard;
 using UnityEngine;
+using YooAssetFrame.Editor;
 
 namespace HotUpdate
 {
     public class UIModule : MonoSingleton<UIModule>
     {
         private Camera mUICamera;
+        private WindowConfig mWindowConfig;
         public UISetting uiSetting;
 
         //所有窗口的Dic
@@ -256,9 +258,13 @@ namespace HotUpdate
             }
         }
         
-        private async Task<GameObject> LoadWindow(string windname)
+        private async Task<GameObject> LoadWindow(string winName)
         {
-            GameObject window = await Resource.Ins.LoadAsset(Utility.GetWindowPath(windname));
+            if (mWindowConfig == null)
+            {
+                mWindowConfig = await Resource.Ins.LoadAsset<WindowConfig>(Utility.GetConfigPath("WindowConfig"));
+            }
+            GameObject window = await Resource.Ins.LoadAsset(mWindowConfig.GetWindowPath(winName));
             window.transform.localScale = Vector3.one;
             window.transform.localPosition = Vector3.zero;
             window.transform.rotation = Quaternion.identity;

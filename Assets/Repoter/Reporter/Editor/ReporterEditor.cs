@@ -1,12 +1,8 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using UnityEditor.Callbacks;
-
 using System.IO;
-using System.Collections;
 
-
-public class ReporterEditor : Editor
+public class ReporterEditor : UnityEditor.Editor
 {
 	[MenuItem("Reporter/Create")]
 	public static void CreateReporter()

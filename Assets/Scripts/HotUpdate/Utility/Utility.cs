@@ -11,7 +11,7 @@ namespace HotUpdate
 
         public static string GetConfigPath(string name)
         {
-            return "Assets/Config/" + name;
+            return "Assets/Config/" + name + ".asset";
         }
     }
 }

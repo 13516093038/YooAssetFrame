@@ -8,12 +8,6 @@ using File = System.IO.File;
 
 namespace YooAssetFrame.Editor
 {
-    public enum GenerateType
-    {
-        Window,
-        ComponentTool,
-    }
-    
     public class UIWindowEditor : EditorWindow
     {
         private string scriptContent;
