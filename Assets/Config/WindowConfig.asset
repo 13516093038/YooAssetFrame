@@ -25,3 +25,7 @@ MonoBehaviour:
     path: Assets/Prefabs/Window/Model/ModelWindow5.prefab
   - name: ModelWindow
     path: Assets/Prefabs/Window/Test/ModelWindow.prefab
+  - name: ModelWindow222
+    path: Assets/Prefabs/Window/Test/ModelWindow222.prefab
+  - name: ModelWindow333
+    path: Assets/Prefabs/Window/Test/ModelWindow333.prefab

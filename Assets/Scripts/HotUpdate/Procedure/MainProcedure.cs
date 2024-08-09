@@ -17,17 +17,24 @@ namespace HotUpdate
             {
                 Test1();
             }
+
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                Application.Quit();
+            }
         }
 
         async void Test()
         {
-            ModelWindow modelWindow = await UIModule.Ins.PopUpWindow<ModelWindow>();
+            // ModelWindow modelWindow = await UIModule.Ins.PopUpWindow<ModelWindow>();
             // TestWindow testWindow = await UIModule.Ins.PopUpWindow<TestWindow>();
+            UIModule.Ins.PushAndPopStackWindow<ModelWindow>();
+            UIModule.Ins.PushAndPopStackWindow<ModelWindow222>();
         }
         
         void Test1()
         {
-            //UIModule.Ins.HideWindow<TestWindow>();
+            UIModule.Ins.PushAndPopStackWindow<ModelWindow333>();
         }
         
         async void Test2()

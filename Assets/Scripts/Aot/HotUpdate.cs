@@ -26,7 +26,9 @@ namespace Aot
             await UpdatePackageManifest();
 #if !UNITY_EDITOR
             // Editor环境下，HotUpdate.dll.bytes已经被自动加载，不需要加载，重复加载反而会出问题。
-            AssetHandle dllHandle = package.LoadAssetAsync<TextAsset>("Assets/HotUpDataDll/HotUpdate.dll.bytes");
+            package.CheckLocationValid("Assets/HotUpDateDll/HotUpdate.dll.bytes");
+            AssetHandle dllHandle = package.LoadAssetAsync<TextAsset>("Assets/HotUpDateDll/HotUpdate.dll.bytes");
+            
             await dllHandle.Task;
             var dllAsset = dllHandle.AssetObject as TextAsset;
             Assembly hotUpdateAss = Assembly.Load(dllAsset.bytes);
@@ -91,11 +93,11 @@ namespace Aot
             }
 
             //编辑器模式无需更新
-            if (Application.isEditor)
-            {
-                Debug.Log("编辑器模式无需更新");
-                return;
-            }
+            // if (Application.isEditor)
+            // {
+            //     Debug.Log("编辑器模式无需更新");
+            //     return;
+            // }
             
             //更新
             string localPackageVersion = package.GetPackageVersion();

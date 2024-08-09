@@ -1,7 +1,7 @@
 /*---------------------------
  *Title:UI自动化组件生成代码工具
  *Author:Jet
- *Date:8/9/2024 3:26:39 PM
+ *Date:8/9/2024 4:57:44 PM
  *Description:变量需以[Text]括号加组件类型的格式进行声明，然后右键窗口物体，一键生成UI数据组件脚本即可
  *注意：以下文件是自动生成的，任何手动修改都会被下次生成覆盖，若手动修改后，尽量避免自动生成
 ---------------------------*/
@@ -11,14 +11,14 @@ using UnityEngine;
 
 namespace HotUpdate
 {
-	public class ModelWindowDataComponent : MonoBehaviour
+	public class ModelWindow333DataComponent : MonoBehaviour
 	{
 		public Button CloseButton;
 
 		public void InitComponent(WindowBase target)
 		{
 			//组件事件绑定
-			ModelWindow mWindow = (ModelWindow)target;
+			ModelWindow333 mWindow = (ModelWindow333)target;
 			target.AddButtonClickListener(CloseButton,mWindow.OnCloseButtonClick);
 		}
 	}

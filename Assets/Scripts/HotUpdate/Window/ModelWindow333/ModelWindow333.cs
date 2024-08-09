@@ -1,7 +1,7 @@
 /*---------------------------
  *Title:UI表现层脚本自动化生成工具
  *Author:Jet
- *Date:8/6/2024 3:36:23 PM
+ *Date:8/9/2024 4:56:18 PM
  *Description:表现层，该层只负责界面的交互，表现相关的更新，不允许编写任何业务逻辑代码
  *注意：以下文件是自动生成的，再次生成不会覆盖原有的代码，会在原油代码上进行新增，可放心使用
 ---------------------------*/
@@ -12,15 +12,15 @@ using UnityEngine;
 namespace HotUpdate
 {
 
-	public class ModelWindow : WindowBase
+	public class ModelWindow333 : WindowBase
 	{
-		private ModelWindowDataComponent dataComp;
+		private ModelWindow333DataComponent dataComp;
 
 		#region 生命周期函数
 		public override void OnAwake()
 		{
 			base.OnAwake();
-			dataComp = gameObject.GetComponent<ModelWindowDataComponent>();
+			dataComp = gameObject.GetComponent<ModelWindow333DataComponent>();
 			dataComp.InitComponent(this);
 		}
 

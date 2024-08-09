@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace HotUpdate
@@ -9,6 +10,11 @@ namespace HotUpdate
         public Canvas Canvas { get; set; }
         public string Name { get; set; }
         public bool Visible { get; set; }
+        
+        //是否是通过堆栈系统弹出的弹窗
+        public bool PopStack { get; set; }
+        
+        public Action<WindowBase> PopStackListener { get; set; }
 
         public virtual void OnAwake()
         {

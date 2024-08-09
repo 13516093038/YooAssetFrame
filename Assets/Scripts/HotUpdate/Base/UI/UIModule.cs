@@ -20,12 +20,18 @@ namespace HotUpdate
         //所有可见窗口的列表
         private List<WindowBase> mVisibleWindowList = new List<WindowBase>();
 
+        //队列，用来管理弹窗的循环弹出
+        private Queue<WindowBase> mWindowStack = new Queue<WindowBase>();
+        //开始弹出堆栈的标志，可以用来处理多种情况，比如正在出栈中有其他页面弹出，可以直接放到栈内进行弹出等
+        private bool mStartPopStackWndStatus = false;
+
         private async void Start()
         {
             mUICamera = GameObject.Find("Main Camera").GetComponent<Camera>();
             uiSetting = await Resource.Ins.LoadAsset<UISetting>(Utility.GetConfigPath("UISetting"));
         }
 
+        #region 窗口管理
         /// <summary>
         /// 弹出窗口
         /// </summary>
@@ -45,6 +51,22 @@ namespace HotUpdate
                 T t = new T();
                 WindowBase window = await InitializeWindow(t, wndName);
                 return window as T;
+            }
+        }
+
+        private async Task<WindowBase> PopUpWindow(WindowBase win)
+        {
+            Type type = win.GetType();
+            string wndName = type.Name;
+            WindowBase wnd = GetWindow(wndName);
+            if (wnd != null)
+            {
+                return ShowWindow(wndName);
+            }
+            else
+            {
+                WindowBase window = await InitializeWindow(win, wndName);
+                return window;
             }
         }
 
@@ -158,6 +180,9 @@ namespace HotUpdate
                 SetWindowMaskVisible();
                 window.OnHide();
             }
+
+            //在出栈的情况下，上一个界面隐藏时，自动打开队列中的下一个界面
+            PopNextStackWindow(window);
         }
 
         /// <summary>
@@ -190,6 +215,9 @@ namespace HotUpdate
                 window.OnDestroy();
                 Destroy(window.gameObject);
             }
+            
+            //在出栈的情况下，上一个界面销毁时，自动打开队列中的下一个界面
+            PopNextStackWindow(window);
         }
 
         public void DestroyAllWindow(List<string> filterList = null)
@@ -270,5 +298,81 @@ namespace HotUpdate
             window.transform.rotation = Quaternion.identity;
             return Instantiate(window, transform);
         }
+        #endregion
+
+        #region 堆栈系统
+        /// <summary>
+        /// 将页面放入队列
+        /// </summary>
+        /// <param name="popCallback"></param>
+        /// <typeparam name="T"></typeparam>
+        public void PushWindowToStack<T>(Action<WindowBase> popCallback = null) where T : WindowBase, new()
+        {
+            T windowBase = new T();
+            windowBase.PopStackListener = popCallback;
+            mWindowStack.Enqueue(windowBase);
+        }
+
+        /// <summary>
+        /// 弹出队列中对一个弹窗
+        /// </summary>
+        public void StartPopFirstStackWindow()
+        {
+            if (mStartPopStackWndStatus)
+            {
+                return;
+            }
+            //已经开始进行弹窗弹出流程
+            mStartPopStackWndStatus = true;
+            PopStackWindow();
+        }
+
+        /// <summary>
+        /// 押入并且弹出队列弹窗
+        /// </summary>
+        /// <param name="popCallback"></param>
+        /// <typeparam name="T"></typeparam>
+        public void PushAndPopStackWindow<T>(Action<WindowBase> popCallback = null) where T : WindowBase, new()
+        {
+            PushWindowToStack<T>(popCallback);
+            StartPopFirstStackWindow();
+        }
+
+        //弹出下一个借口
+        private void PopNextStackWindow(WindowBase windowBase)
+        {
+            if (windowBase != null && mStartPopStackWndStatus && windowBase.PopStack)
+            {
+                windowBase.PopStack = false;
+                PopStackWindow();
+            }
+        }
+
+        /// <summary>
+        /// 弹出弹窗
+        /// </summary>
+        private async void PopStackWindow()
+        {
+            if (mWindowStack.Count > 0)
+            {
+                WindowBase window = mWindowStack.Dequeue();
+                WindowBase popWindow = await PopUpWindow(window);
+                popWindow.PopStackListener = window.PopStackListener;
+                popWindow.PopStack = true;
+                popWindow.PopStackListener?.Invoke(popWindow);
+                popWindow.PopStackListener = null;
+            }
+            else
+            {
+                mStartPopStackWndStatus = false;
+            }
+        }
+
+        public void ClearStackWindows()
+        {
+            mWindowStack.Clear();
+        }
+        #endregion
+        
     }
 }

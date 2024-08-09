@@ -14,7 +14,6 @@ namespace YooAssetFrame.Editor
 
         public void GeneratorWindowConfig()
         {
-            Debug.LogError("Asdasdasdas");
             WindowConfigList.Clear();
             string[] filePathArr = Directory.GetFiles(windowRootPath, "*.prefab", SearchOption.AllDirectories);
             foreach (var path in filePathArr)

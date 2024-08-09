@@ -25,15 +25,16 @@ namespace YooAssetFrame.Editor
                 Debug.LogError("需要选择GameObject");
                 return;
             }
+
             objDataList = new List<EditorObjectData>();
 
             //解析窗口组件数据
             PresWindowNodeData(obj.transform);
-            
+
             //储存字段名称
             string dataListJson = JsonConvert.SerializeObject(objDataList);
             PlayerPrefs.SetString(GeneratorConfig.OBJDATALIST_KEY, dataListJson);
-            
+
             //生成CS脚本
             string csContent = CreateCS(obj.name);
             string dirPath = GeneratorConfig.ComponentGeneratorPath + "/" + obj.name;
@@ -43,7 +44,7 @@ namespace YooAssetFrame.Editor
                 Directory.CreateDirectory(dirPath);
             }
 
-            UIWindowEditor.ShowWindow( GenerateType.ComponentTool, csContent, csPath);
+            UIWindowEditor.ShowWindow(GenerateType.ComponentTool, csContent, csPath);
             EditorPrefs.SetString("GeneratorClassname", obj.name + "DataComponent");
         }
 
@@ -65,9 +66,11 @@ namespace YooAssetFrame.Editor
                     string fieldName = name.Substring(index, name.Length - index);
                     //获取字段类型
                     string fieldType = name.Substring(1, index - 2);
-                    
-                    objDataList.Add(new EditorObjectData{fieldName = fieldName, fieldType = fieldType, insID = obj.GetInstanceID()});
+
+                    objDataList.Add(new EditorObjectData
+                        { fieldName = fieldName, fieldType = fieldType, insID = obj.GetInstanceID() });
                 }
+
                 PresWindowNodeData(trans.GetChild(i));
             }
         }
@@ -84,7 +87,7 @@ namespace YooAssetFrame.Editor
             sb.AppendLine(" *Description:变量需以[Text]括号加组件类型的格式进行声明，然后右键窗口物体，一键生成UI数据组件脚本即可");
             sb.AppendLine(" *注意：以下文件是自动生成的，任何手动修改都会被下次生成覆盖，若手动修改后，尽量避免自动生成");
             sb.AppendLine("---------------------------*/");
-            
+
             sb.AppendLine();
             sb.AppendLine("using UnityEngine.UI;");
             sb.AppendLine("using UnityEngine;");
@@ -99,20 +102,20 @@ namespace YooAssetFrame.Editor
 
             sb.AppendLine($"\tpublic class {name + "DataComponent : MonoBehaviour"}");
             sb.AppendLine("\t{");
-            
+
             //根据字段数据列表声明字段
             foreach (var item in objDataList)
             {
                 sb.AppendLine("\t\tpublic " + item.fieldType + " " + item.fieldName + item.fieldType + ";\n");
             }
-            
+
             //声明接口初始化组件
             sb.AppendLine("\t\tpublic void InitComponent(WindowBase target)");
             sb.AppendLine("\t\t{");
             sb.AppendLine("\t\t\t//组件事件绑定");
             //得到逻辑类 WindowBase -> LoginWindow
             sb.AppendLine($"\t\t\t{name} mWindow = ({name})target;");
-            
+
             //生成UI事件绑定代码
             foreach (var item in objDataList)
             {
@@ -123,18 +126,21 @@ namespace YooAssetFrame.Editor
                 if (type.Contains("Button"))
                 {
                     suffix = "Click";
-                    sb.AppendLine($"\t\t\ttarget.AddButtonClickListener({methodName}{type},mWindow.On{methodName}Button{suffix});");
+                    sb.AppendLine(
+                        $"\t\t\ttarget.AddButtonClickListener({methodName}{type},mWindow.On{methodName}Button{suffix});");
                 }
-                
+
                 if (type.Contains("InputField"))
                 {
-                    sb.AppendLine($"\t\t\ttarget.AddInputFieldListener({methodName}{type},mWindow.On{methodName}InputChange, mWindow.On{methodName}InputEnd);");
+                    sb.AppendLine(
+                        $"\t\t\ttarget.AddInputFieldListener({methodName}{type},mWindow.On{methodName}InputChange, mWindow.On{methodName}InputEnd);");
                 }
-                
+
                 if (type.Contains("Toggle"))
                 {
                     suffix = "Change";
-                    sb.AppendLine($"\t\t\ttarget.AddToggleClickListener({methodName}{type},mWindow.On{methodName}Button{suffix});");
+                    sb.AppendLine(
+                        $"\t\t\ttarget.AddToggleClickListener({methodName}{type},mWindow.On{methodName}Button{suffix});");
                 }
             }
 
@@ -160,6 +166,7 @@ namespace YooAssetFrame.Editor
             {
                 return;
             }
+
             //1.通过反射的方式从程序集中找到这个脚本，把它挂到当前的物体上
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             //找到C#程序集
@@ -172,6 +179,7 @@ namespace YooAssetFrame.Editor
                 Debug.LogError("type为空");
                 return;
             }
+
             //获取要挂载的物体
             string windowObjName = classname.Replace("DataComponent", "");
             WindowConfig windowConfig =
@@ -186,12 +194,14 @@ namespace YooAssetFrame.Editor
                 Debug.LogError("物体为空,物体名：" + windowObjName);
                 return;
             }
+
             //获取窗口上有没有挂载数据组件，如果没有进行挂载
             Component comp = windowObj.GetComponent(type);
             if (comp == null)
             {
                 comp = windowObj.AddComponent(type);
             }
+
             //2.通过反射的方式，遍历数据列表，找到对应的字段，赋值
             //获取对象数据列表
             string datalistjson = PlayerPrefs.GetString(GeneratorConfig.OBJDATALIST_KEY);
@@ -199,7 +209,8 @@ namespace YooAssetFrame.Editor
 
             //获取脚本所有字段
             FieldInfo[] fieldInfoList = type.GetFields();
-            
+
+
             foreach (var item in fieldInfoList)
             {
                 foreach (var objData in objDataList)
@@ -216,10 +227,12 @@ namespace YooAssetFrame.Editor
                         {
                             item.SetValue(comp, uiObject.GetComponent(objData.fieldType));
                         }
+
                         break;
                     }
                 }
             }
+            
             PrefabUtility.ApplyPrefabInstance(windowObj, InteractionMode.UserAction);
             DestroyImmediate(windowObj);
             EditorPrefs.DeleteKey("GeneratorClassname");

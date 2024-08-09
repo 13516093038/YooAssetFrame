@@ -100,6 +100,7 @@ GameObject:
   - component: {fileID: 4763687247488093597}
   - component: {fileID: 1105370000064869487}
   - component: {fileID: 2768944741495134411}
+  - component: {fileID: 1176273264400423278}
   m_Layer: 0
   m_Name: ModelWindow2
   m_TagString: Untagged
@@ -191,6 +192,20 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &1176273264400423278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7450189666329638810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b820704d481644ebbbc1342b0333612, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CloseButton: {fileID: 0}
+  Close2Button: {fileID: 0}
 --- !u!1 &7942686990035975388
 GameObject:
   m_ObjectHideFlags: 0

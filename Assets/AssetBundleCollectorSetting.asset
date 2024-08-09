@@ -18,10 +18,10 @@ MonoBehaviour:
   Packages:
   - PackageName: DefaultPackage
     PackageDesc: 
-    EnableAddressable: 0
+    EnableAddressable: 1
     LocationToLower: 0
     IncludeAssetGUID: 0
-    AutoCollectShaders: 1
+    AutoCollectShaders: 0
     IgnoreRuleName: NormalIgnoreRule
     Groups:
     - GroupName: 
@@ -49,7 +49,7 @@ MonoBehaviour:
         CollectorGUID: af43ec6260c40429492039579114b87f
         CollectorType: 0
         AddressRuleName: AddressByFileName
-        PackRuleName: PackSeparately
+        PackRuleName: PackDirectory
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
