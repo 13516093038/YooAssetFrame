@@ -100,6 +100,7 @@ GameObject:
   - component: {fileID: 4763687247488093597}
   - component: {fileID: 1105370000064869487}
   - component: {fileID: 2768944741495134411}
+  - component: {fileID: 6645418389256872094}
   m_Layer: 0
   m_Name: ModelWindow5
   m_TagString: Untagged
@@ -191,6 +192,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!225 &6645418389256872094
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7450189666329638810}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &7942686990035975388
 GameObject:
   m_ObjectHideFlags: 0

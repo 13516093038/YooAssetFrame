@@ -32,6 +32,43 @@ namespace HotUpdate
         }
 
         #region 窗口管理
+
+        /// <summary>
+        /// 只加载窗口，不调用生命周期
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        public async void PreLoadWindow<T>() where T : WindowBase, new()
+        {
+            Type type = typeof(T);
+            string wndName = type.Name;
+            Debug.Log("开始预加载窗口：" + wndName);
+            T windowBase = new T();
+            //克隆界面，初始化界面信息
+            //1.生成对应的窗口预支体
+            GameObject nWindow = await LoadWindow(wndName);
+            //2.初始化窗口类
+            if (nWindow != null)
+            {
+                windowBase.gameObject = nWindow;
+                windowBase.Name = wndName;
+                windowBase.transform = nWindow.transform;
+                windowBase.Canvas = nWindow.GetComponent<Canvas>();
+                windowBase.Canvas.worldCamera = mUICamera;
+                windowBase.OnAwake();
+                windowBase.SetVisible(false);
+                RectTransform rectTrans = nWindow.GetComponent<RectTransform>();
+                rectTrans.anchorMax = Vector2.one;
+                rectTrans.offsetMax = Vector2.zero;
+                rectTrans.offsetMin = Vector2.zero;
+                mAllWindowDic.Add(wndName,windowBase);
+                mAllWindowList.Add(windowBase);
+            }
+            else
+            {
+                Debug.LogError("没有预加载到窗口：" + wndName);
+            }
+        }
+        
         /// <summary>
         /// 弹出窗口
         /// </summary>

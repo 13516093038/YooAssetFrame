@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -13,7 +13,9 @@ namespace HotUpdate
         private List<InputField> m_AllInputFieldList = new List<InputField>();
 
         private CanvasGroup mUIMask;
+        private CanvasGroup mCanvasGroup;
         private Transform mUIContent;
+        protected bool mDisableAnim = false;
 
         /// <summary>
         /// 初始化基类组件
@@ -21,6 +23,7 @@ namespace HotUpdate
         private void InitializeBaseComponent()
         {
             mUIMask = transform.Find("UIMask").GetComponent<CanvasGroup>();
+            mCanvasGroup = transform.GetComponent<CanvasGroup>();
             mUIContent = transform.Find("UIContent").transform;
         }
         
@@ -35,6 +38,7 @@ namespace HotUpdate
         public override void OnShow()
         {
             base.OnShow();
+            ShowAnimation();
         }
 
         public override void OnUpdate()
@@ -57,16 +61,46 @@ namespace HotUpdate
 
         #endregion
 
-        public void HideWindow()
+        #region 动画管理
+
+        protected virtual void ShowAnimation()
         {
-            UIModule.Ins.HideWindow(Name);
+            if (Canvas.sortingOrder > 99 && mDisableAnim == false)
+            {
+                //缩放动画
+                mUIContent.localScale = Vector3.one * 0.8f;
+                mUIContent.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+            }
+        }
+
+        protected virtual void HideAnimation()
+        {
+            if (mDisableAnim == false)
+            {
+                mUIContent.DOScale(Vector3.one * 1.1f, 0.2f).SetEase(Ease.OutBack).OnComplete(() =>
+                {
+                    UIModule.Ins.HideWindow(Name);
+                });
+            }
+            else
+            {
+                UIModule.Ins.HideWindow(Name);
+            }
+        }
+
+        #endregion
+
+        public virtual void HideWindow()
+        {
+            //UIModule.Ins.HideWindow(Name);
+            HideAnimation();
         }
         
         public override void SetVisible(bool isVisible)
         {
             base.SetVisible(isVisible);
-            //临时代码
-            gameObject.SetActive(isVisible);
+            mCanvasGroup.alpha = isVisible ? 1 : 0;
+            mCanvasGroup.blocksRaycasts = isVisible;
             Visible = isVisible;
         }
 

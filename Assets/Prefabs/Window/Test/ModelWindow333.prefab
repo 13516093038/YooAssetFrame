@@ -297,6 +297,7 @@ GameObject:
   - component: {fileID: 1493214196655338646}
   - component: {fileID: 3562109866785103492}
   - component: {fileID: 6415796184250004994}
+  - component: {fileID: 5236145393419867405}
   m_Layer: 0
   m_Name: ModelWindow333
   m_TagString: Untagged
@@ -313,7 +314,7 @@ RectTransform:
   m_GameObject: {fileID: 8231298546527677047}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2574490515030397046}
@@ -401,6 +402,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CloseButton: {fileID: 1857316368227855991}
+--- !u!225 &5236145393419867405
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8231298546527677047}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &8515101929277469310
 GameObject:
   m_ObjectHideFlags: 0

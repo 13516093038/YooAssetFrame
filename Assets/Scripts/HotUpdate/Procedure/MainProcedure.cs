@@ -28,6 +28,7 @@ namespace HotUpdate
         {
             // ModelWindow modelWindow = await UIModule.Ins.PopUpWindow<ModelWindow>();
             // TestWindow testWindow = await UIModule.Ins.PopUpWindow<TestWindow>();
+            UIModule.Ins.PreLoadWindow<ModelWindow333>();
             UIModule.Ins.PushAndPopStackWindow<ModelWindow>();
             UIModule.Ins.PushAndPopStackWindow<ModelWindow222>();
         }
